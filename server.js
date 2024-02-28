@@ -37,13 +37,18 @@ app.post('/text', async (request, response) => {
 app.post('/image', upload.single('image'), async (request, response) => {
   const { quantity } = request.body
 
-  const { path } = request.file
+  const { path, filename } = request.file
 
   const newFolder = 'build/'
 
   await handleCompressImage(path, newFolder)
 
-  const text = await getTextFromImage(path, newFolder)
+  let text
+  if (process.env.NODE_ENV === 'production') {
+    text = await getTextFromImage(filename, newFolder)
+  } else {
+    text = await getTextFromImage(path, newFolder)
+  }
 
   const prompt = `estou extraindo o texto de uma foto onde nela possui um ou mais tipos de conteúdo, por se tratar de uma foto com varios tipos de texto foque naqueles que realmente representam um determinado assunto e não um texto qualquer que estava naquela página, a partir do conteúdo que vou passar quero que você devolva ${quantity} resultados estilo flashcard (texto e resposta) com conteúdo aprofundado sobre o assunto e com no maximo 10 palavras na pergunta e 20 palavras na resposta, pois o foco é fazer um estudante de vestibular conseguir estudar por meio desses flashcards e passar na prova dele. texto: ${text}`
 
