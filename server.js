@@ -60,6 +60,9 @@ app.post('/image', upload.single('image'), async (request, response) => {
     fs.mkdirSync(dir)
   }
 
+  const filePath = `${dir}/.gitkeep`
+  fs.writeFileSync(filePath, '')
+
   return response.send(flashcardsCsv)
 })
 
