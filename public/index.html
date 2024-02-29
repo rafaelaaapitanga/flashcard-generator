@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard Generator</title>
+</head>
+<body>
+  <input type="file" id="imageInput" accept="image/*">
+  <button onclick="processImage()">Processar Imagem</button>
+  <div id="result"></div>
+
+  <script>
+    async function processImage() {
+      const fileInput = document.getElementById('imageInput');
+      const resultDiv = document.getElementById('result');
+
+      const imageFile = fileInput.files[0];
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+
+        try {
+          // Enviar a imagem para o servidor (pode ser necessário ajustar isso dependendo do seu servidor)
+          const response = await fetch('/processar-imagem', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          // Exibir o link para download do arquivo TSV
+          resultDiv.innerHTML = `<a href="${result.fileUrl}" download>Download do Arquivo TSV</a>`;
+        } catch (error) {
+          console.error('Ocorreu um erro:', error);
+          resultDiv.innerHTML = 'Erro ao processar a imagem.';
+        }
+      } else {
+        resultDiv.innerHTML = 'Por favor, selecione uma imagem.';
+      }
+    }
+  </script>
+</body>
+</html>
